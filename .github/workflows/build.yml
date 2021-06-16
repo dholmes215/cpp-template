@@ -35,7 +35,8 @@ jobs:
 
     - name: Log ls for compilers
       run: |
-        which clang++
+        ls /usr/bin/clang*
+        ls /usr/bin/gcc*
 
     - name: Log CMake version
       run: cmake --version
