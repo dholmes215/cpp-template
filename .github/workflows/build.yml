@@ -33,6 +33,11 @@ jobs:
       if: matrix.platform.cxx == 'g++' || matrix.platform.cxx == 'clang++'
       run: $CXX --version
 
+    - name: Log ls for compilers
+      run: |
+        ls clang*
+        ls g++*
+
     - name: Log CMake version
       run: cmake --version
 
