@@ -62,3 +62,24 @@ jobs:
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{ matrix.build_type }}
+
+    # For Windows Debug builds, run OpenCppCoverage and upload report to CodeCov
+    - name: Setup OpenCppCoverage and add to PATH
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      id: setup_opencppcoverage
+      run: |
+        choco install OpenCppCoverage -y
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+    - name: Generate Report
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      id: generate_test_report
+      shell: cmd
+      working-directory: ${{github.workspace}}/build
+      run: OpenCppCoverage.exe --sources ${{env.GITHUB_REPOSITORY}}\src --export_type cobertura:${{github.workspace}}\coverage.xml --cover_children --verbose -- ctest -C ${{matrix.build_type}}
+    - name: Upload Report to Codecov
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      uses: codecov/codecov-action@v1.3.2
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: true
+        functionalities: fix
