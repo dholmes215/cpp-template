@@ -62,3 +62,29 @@ jobs:
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{ matrix.build_type }}
+
+    - name: Setup OpenCppCoverage and add to PATH
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      id: setup_opencppcoverage
+      run: |
+        choco install OpenCppCoverage -y
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+    - name: Generate Report
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      id: generate_test_report
+      shell: cmd
+      working-directory: ${{github.workspace}}/build
+      # TODO: Don't hard-code cpp-template path
+      run: OpenCppCoverage.exe --sources cpp-template\src --export_type cobertura:${{github.workspace}}\build\coverage.xml --cover_children --verbose -- ctest -C ${{ matrix.build_type }}
+    - name: Print coverage.xml
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      run: type ${{github.workspace}}\build\coverage.xml
+    - name: Upload Report to Codecov
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      uses: codecov/codecov-action@v1.3.2
+      with:
+        # XXX For some reason CodeCov doesn't like (unescaped?) windows path separators.
+        # TODO Try to use the absolute path either by escaping properly or convering `\` to `/`
+        files: ./build/coverage.xml
+        fail_ci_if_error: true
+        functionalities: fix
