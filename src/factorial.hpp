@@ -4,3 +4,4 @@
 unsigned int factorial(unsigned int number);
 
 unsigned int unused(unsigned int number);
+unsigned int unused2(unsigned int number);
