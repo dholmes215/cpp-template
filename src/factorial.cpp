@@ -8,3 +8,8 @@ unsigned int unused(unsigned int number)
 {
     return number * number;
 }
+
+unsigned int unused2(unsigned int number)
+{
+    return number / number;
+}
