@@ -2,3 +2,5 @@
 
 // Computes a factorial.  May contain bug(s)!
 unsigned int factorial(unsigned int number);
+
+unsigned int unused(unsigned int number);
