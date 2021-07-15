@@ -13,3 +13,8 @@ unsigned int unused2(unsigned int number)
 {
     return number / number;
 }
+
+unsigned int unused3(unsigned int number)
+{
+    return number + number;
+}
